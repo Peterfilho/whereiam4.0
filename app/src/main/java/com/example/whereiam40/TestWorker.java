@@ -37,12 +37,12 @@ import java.util.concurrent.TimeUnit;
 
 public class TestWorker extends Worker {
 
-    private String tsi;
-    private String c7;
-    private String f5;
-    private String d0;
-    private String f6;
-    private String c8;
+    private float tsi;
+    private float c7;
+    private float f5;
+    private float d0;
+    private float f6;
+    private float c8;
 
     private WifiManager wifiManager;
     private boolean running = true;
@@ -66,21 +66,15 @@ public class TestWorker extends Worker {
         String date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
         String ra = getInputData().getString("ra");
 //        Log.d("DEBUG", "ra que chega: "+ra);
+        ScanSignal busca = scanWifi();
 
-//        try {
-//            testPost(ra, date);
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        sendData(ra,busca.toString(),date);
 
-        scanWifi();
         // Indicate whether the task finished successfully with the Result
         return Result.success();
     }
 
-    private void sendData(final String user_id, final String busca, final String data) {
+    private void sendData(final String user_id, final String busca, final String date) {
 
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         String url = "http://200.134.18.125:5000/api/v1/resources/positions/app";
@@ -89,7 +83,7 @@ public class TestWorker extends Worker {
         try {
             js.put("user_id", user_id);
             js.put("search", busca);
-            js.put("date", data);
+            js.put("date", date);
             Log.d("DEBUG json: ", "" + js);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -118,16 +112,8 @@ public class TestWorker extends Worker {
         queue.add(jsonObjectRequest);
     }
 
-    private void testPost(String ra, String datetime) throws ExecutionException, InterruptedException {
-        //String datetime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
-        //Log.d("DEBUG", "testando data: "+datetime);
-        //String ra = "1111112";
-        String search = "-100,-72,-74,-59,-79,-100"; //B8A
-//        Log.d("DEBUG", "Busca: "+search+", ra: "+ra+", Data: "+datetime);
-        sendData(ra,search, datetime);
-    }
 
-    private void scanWifi () {
+    private ScanSignal scanWifi () {
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
@@ -185,49 +171,62 @@ public class TestWorker extends Worker {
             Log.d("DEBUG", "   Média: " + resultMedia.get(hashKey));
 
             switch (hashKey) {
-                //case "b2": //TSI
-                case "f0": //roteador casa
-                    Log.d("DEBUG", "entrando no first case");
-                    tsi = resultMedia.get(hashKey).toString();
+                case "2a":
+                    tsi = resultMedia.get(hashKey);
                     break;
 
-                case "f4": //outra rede proximo de casa
-                //case "c7":
-
-                    Log.d("DEBUG", "entrando no second case");
-                    c7 = resultMedia.get(hashKey).toString();
+                case "c7":
+                    c7 = resultMedia.get(hashKey);
                     break;
 
                 case "f5":
-
-                    Log.d("DEBUG", "entrando no third case");
-                    f5 = resultMedia.get(hashKey).toString();
+                    f5 = resultMedia.get(hashKey);
                     break;
 
                 case "d0":
-
-                    Log.d("DEBUG", "entrando no fourth case");
-                    d0 = resultMedia.get(hashKey).toString();
+                    d0 = resultMedia.get(hashKey);
                     break;
 
                 case "f6":
-                    f6 = resultMedia.get(hashKey).toString();
+                    f6 = resultMedia.get(hashKey);
                     break;
 
                 case "c8":
-                    c8 = resultMedia.get(hashKey).toString();
+                    c8 = resultMedia.get(hashKey);
                     break;
 
-                case "2a":
-                    tsi = resultMedia.get(hashKey).toString();
                  }
                }
 
         //Aqui monta a lista de sinais na ordem correta
 
-        ScanSignal currentSignal = new ScanSignal();
-        Log.d("DEBUG",  currentSignal.toString());
+        ScanSignal currentSignal = new ScanSignal(
+                (int)Math.round(tsi),
+                (int)Math.round(c7),
+                (int)Math.round(f5),
+                (int)Math.round(d0),
+                (int)Math.round(f6),
+                (int)Math.round(c8)
+        );
 
+        Log.d("DEBUG",  "Anterior: "+currentSignal.toString());
+        ScanSignal currentSignalFake = new ScanSignal(
+
+        //      -66,-76,-78,-62,-79,-81   //b6a
+        //      -70,-60,-61,-69,-78,-72   //b9b
+        //      -100,-67,-63,-49,-53,-48  //wc-m
+
+                -66,
+                -76,
+                -78,
+                -62,
+                -79,
+                -81
+        );
+
+        Log.d("DEBUG", "Fake: "+ currentSignalFake.toString());
+
+        return currentSignalFake;
     }
 
     private void registerReceiver(BroadcastReceiver wifiReceiver, IntentFilter intentFilter) {

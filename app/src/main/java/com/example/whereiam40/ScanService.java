@@ -140,10 +140,10 @@ public class ScanService extends IntentService {
         for (String hashKey : resultMedia.keySet())
             resultMedia.put(hashKey, resultMedia.get(hashKey) / scanTimes);
 
-        ScanSignal currentSignal = new ScanSignal();
+        //ScanSignal currentSignal = new ScanSignal();
 
 
-        Log.d("DEBUG", currentSignal.toString());
+       // Log.d("DEBUG", currentSignal.toString());
 
 
 //        for (String hashKey : result.keySet()) {

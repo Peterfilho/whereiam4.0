@@ -1,7 +1,6 @@
 package com.example.whereiam40;
 
 class ScanSignal {
-    private String local;
     private int mediaTsi;
     private int mediaC7;
     private int mediaF5;
@@ -9,59 +8,15 @@ class ScanSignal {
     private int mediaF6;
     private int mediaC8;
 
-
-    public ScanSignal(){
-
+    public ScanSignal(int mediaTsi, int mediaC7, int mediaF5, int mediaD0, int mediaF6, int mediaC8) {
+        this.mediaTsi = mediaTsi;
+        this.mediaC7 = mediaC7;
+        this.mediaF5 = mediaF5;
+        this.mediaD0 = mediaD0;
+        this.mediaF6 = mediaF6;
+        this.mediaC8 = mediaC8;
     }
 
-    public ScanSignal(String csvLine){
-        String[] tokens = csvLine.split(",");
-        local = tokens[0];
-
-        try{
-            mediaTsi = Integer.parseInt(tokens[1]);
-        }catch(Exception e){
-            mediaTsi = -Integer.MAX_VALUE;
-        }
-
-        try{
-            mediaC7 = Integer.parseInt(tokens[2]);
-        }catch(Exception e){
-            mediaC7 = -Integer.MAX_VALUE;
-        }
-
-        try{
-            mediaF5 = Integer.parseInt(tokens[3]);
-        }catch(Exception e){
-            mediaF5 = -Integer.MAX_VALUE;
-        }
-
-        try{
-            mediaD0 = Integer.parseInt(tokens[4]);
-        }catch(Exception e){
-            mediaD0 = -Integer.MAX_VALUE;
-        }
-
-        try{
-            mediaF6 = Integer.parseInt(tokens[5]);
-        }catch(Exception e){
-            mediaF6 = -Integer.MAX_VALUE;
-        }
-
-        try{
-            mediaC8 = Integer.parseInt(tokens[6]);
-        }catch(Exception e){
-            mediaC8 = -Integer.MAX_VALUE;
-        }
-    }
-
-    public String getLocal() {
-        return local;
-    }
-
-    public void setLocal(String local) {
-        this.local = local;
-    }
 
     public int getMediaTsi() {
         return mediaTsi;
@@ -112,6 +67,24 @@ class ScanSignal {
     }
 
     public String toString(){
-        return (local+","+mediaTsi+","+mediaC7+","+mediaF5+","+mediaD0+","+mediaF6+","+mediaC8);
+        if(mediaTsi == 0){
+            mediaTsi = 100;
+        }
+        if(mediaC7 == 0){
+            mediaC7 = 100;
+        }
+        if(mediaF5 == 0){
+            mediaF5 = 100;
+        }
+        if(mediaD0 == 0){
+            mediaD0 = 100;
+        }
+        if(mediaF6 == 0){
+            mediaF6 = 100;
+        }
+        if(mediaC8 == 0){
+            mediaC8 = 100;
+        }
+        return (mediaTsi+","+mediaC7+","+mediaF5+","+mediaD0+","+mediaF6+","+mediaC8);
     }
 }
