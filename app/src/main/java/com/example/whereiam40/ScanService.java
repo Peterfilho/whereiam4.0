@@ -88,7 +88,7 @@ public class ScanService extends IntentService {
         Toast.makeText(this, "Procurando redes ..", Toast.LENGTH_SHORT).show();
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        LocationManager service = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+//        LocationManager service = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
 
 //        boolean gpsEnabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
         /* VERIFICA SE O GPS ESTÁ LIGADO */

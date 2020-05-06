@@ -19,7 +19,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
@@ -44,15 +46,22 @@ public class MainActivity extends AppCompatActivity {
         final Switch aSwitch = findViewById(R.id.switch1);
         final EditText editText = findViewById(R.id.ra);
 
-        Constraints constraints = new Constraints.Builder()
-                .setRequiresCharging(true)
-                .build();
+//        Constraints constraints = new Constraints.Builder()
+//                .setRequiresCharging(false)
+//                .build();
 
+        LocationManager service = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+
+        boolean gpsEnabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        /* VERIFICA SE O GPS ESTÁ LIGADO */
+        if (!gpsEnabled) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
 
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Log.d("DEBUG", "Começou..");
                     editText.setEnabled(false);
 
                     Data.Builder data = new Data.Builder();
@@ -61,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     PeriodicWorkRequest testWork = new PeriodicWorkRequest.Builder(TestWorker.class, 15, TimeUnit.MINUTES)
                             .addTag("APIPosting")
                             .setInputData(data.build())
-                            .setConstraints(constraints)
+                           // .setConstraints(constraints)
                             .build();
 
                     WorkManager.getInstance(getApplicationContext())
@@ -70,10 +79,6 @@ public class MainActivity extends AppCompatActivity {
                     switchOnMsg();
                     Log.d("DEBUG", "Service Status: "+ (WorkManager.getInstance().getWorkInfoById(testWork.getId())));
 
-                    //WorkManager.getInstance().cancelAllWorkByTag("APIPosting");
-
-                    //Log.d("DEBUG", "Service Status apos cancelar: "+ (WorkManager.getInstance().getWorkInfoById(testWork.getId())));
-
                 }else{
                     switchOffMsg();
                     editText.setEnabled(true);
@@ -81,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
                     WorkManager.getInstance().cancelAllWorkByTag("APIPosting");
                     //WorkManager.getInstance().cancelAllWork();
 
-                    //Log.d("DEBUG", "Service Status: "+ (WorkManager.getInstance().getWorkInfoById(testWork.getId())));
                 }
             }
         });
